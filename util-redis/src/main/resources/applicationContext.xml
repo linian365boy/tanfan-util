@@ -1,17 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
-        <bean name="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+        <context:component-scan base-package="com.nian.util"/>
+
+        <bean name="poolConfig" class="redis.clients.jedis.JedisPoolConfig" id="poolConfig">
             <property name="maxIdle" value="8"/>
             <property name="maxTotal" value="8"/>
             <property name="testOnBorrow" value="true"/>
         </bean>
 
+        <bean name="pool" class="redis.clients.jedis.JedisPool" id="pool">
+            <constructor-arg index="0" ref="poolConfig"/>
+            <constructor-arg index="1" type="String" value="192.168.139.159"/>
+            <constructor-arg index="2" type="int" value="7002"/>
+        </bean>
 
+        <bean name="hostAndPort7000" id="hostAndPort7000" class="redis.clients.jedis.HostAndPort">
+            <constructor-arg value="192.168.139.159" index="0"/>
+            <constructor-arg value="7000" index="1"/>
+        </bean>
 
+        <bean name="hostAndPort7001" id="hostAndPort7001" class="redis.clients.jedis.HostAndPort">
+            <constructor-arg value="192.168.139.159" index="0"/>
+            <constructor-arg value="7001" index="1"/>
+        </bean>
 
+        <bean name="hostAndPort7002" id="hostAndPort7002" class="redis.clients.jedis.HostAndPort">
+            <constructor-arg value="192.168.139.159" index="0"/>
+            <constructor-arg value="7002" index="1"/>
+        </bean>
 
+        <bean name="hostAndPort7003" id="hostAndPort7003" class="redis.clients.jedis.HostAndPort">
+            <constructor-arg value="192.168.139.159" index="0"/>
+            <constructor-arg value="7003" index="1"/>
+        </bean>
+
+        <bean name="hostAndPort7004" id="hostAndPort7004" class="redis.clients.jedis.HostAndPort">
+            <constructor-arg value="192.168.139.159" index="0"/>
+            <constructor-arg value="7004" index="1"/>
+        </bean>
+
+        <bean name="hostAndPort7005" id="hostAndPort7005" class="redis.clients.jedis.HostAndPort">
+            <constructor-arg value="192.168.139.159" index="0"/>
+            <constructor-arg value="7005" index="1"/>
+        </bean>
+
+        <bean name="jedisCluster" class="redis.clients.jedis.JedisCluster" id="jedisCluster">
+            <constructor-arg index="0">
+                <set>
+                    <ref bean="hostAndPort7000"/>
+                    <ref bean="hostAndPort7001"/>
+                    <ref bean="hostAndPort7002"/>
+                    <ref bean="hostAndPort7003"/>
+                    <ref bean="hostAndPort7004"/>
+                    <ref bean="hostAndPort7005"/>
+                </set>
+            </constructor-arg>
+            <constructor-arg index="1" type="int" value="15000"/>
+            <constructor-arg index="2" ref="poolConfig"/>
+        </bean>
 
 </beans>

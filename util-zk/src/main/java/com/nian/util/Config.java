@@ -11,6 +11,7 @@ import java.io.Serializable;
  */
 public class Config implements Serializable {
 
+    private static final long serialVersionUID = -6750033623826396948L;
     private int id;
     private String key;
     private String comment;
@@ -24,12 +25,12 @@ public class Config implements Serializable {
         this.id = id;
     }
 
-    public String getValue() {
-        return value;
+    public String getKey() {
+        return key;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getComment() {
@@ -40,11 +41,11 @@ public class Config implements Serializable {
         this.comment = comment;
     }
 
-    public String getKey() {
-        return key;
+    public String getValue() {
+        return value;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

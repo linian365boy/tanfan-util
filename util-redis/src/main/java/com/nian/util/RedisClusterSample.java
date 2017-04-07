@@ -2,7 +2,12 @@ package com.nian.util;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author niange
@@ -13,23 +18,44 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class RedisClusterSample {
 
-    public static JedisCluster js;
+    private static JedisCluster jedisCluster;
 
-    public static JedisCluster getJedisCluster(){
-        if(js == null){
-            HostAndPort hostAndPort = new HostAndPort("127.0.0.1", 6379);
+    public static JedisCluster getCluster(){
+        if(jedisCluster == null){
+            HostAndPort hostAndPort7000 = new HostAndPort("192.168.139.159", 7000);
+            HostAndPort hostAndPort7001 = new HostAndPort("192.168.139.159", 7001);
+            HostAndPort hostAndPort7002 = new HostAndPort("192.168.139.159", 7002);
+            HostAndPort hostAndPort7003 = new HostAndPort("192.168.139.159", 7003);
+            HostAndPort hostAndPort7004 = new HostAndPort("192.168.139.159", 7004);
+            HostAndPort hostAndPort7005 = new HostAndPort("192.168.139.159", 7005);
+
             JedisPoolConfig config = new JedisPoolConfig();
+            config.setTestOnBorrow(true);
+            config.setMaxIdle(8);
             config.setMaxTotal(8);
-            config.setMinIdle(8);
-            js = new JedisCluster(hostAndPort, config);
+            Set<HostAndPort> hostAndPorts = new HashSet<>();
+            hostAndPorts.add(hostAndPort7000);
+            hostAndPorts.add(hostAndPort7001);
+            hostAndPorts.add(hostAndPort7002);
+            hostAndPorts.add(hostAndPort7003);
+            hostAndPorts.add(hostAndPort7004);
+            hostAndPorts.add(hostAndPort7005);
+            jedisCluster = new JedisCluster(hostAndPorts, 15000, config);
         }
-        return js;
+        return jedisCluster;
     }
 
     public static void main(String[] args){
-        JedisCluster js = getJedisCluster();
-        js.set("key", "value");
-        String string = js.get("key");
-        System.out.println(string);
+        long start = System.currentTimeMillis();
+        JedisCluster jc = getCluster();
+        Map<String, JedisPool> map = jc.getClusterNodes();
+        for(Map.Entry<String, JedisPool> entry : map.entrySet()){
+            System.out.println("redis cluster : "+entry.getKey()+" "+entry.getValue());
+        }
+        String setResp = jc.set("nima", "niubi");
+        System.out.println("set result = "+setResp);
+        String value = jc.get("nima");
+        System.out.println("heheda-=-=-===="+value);
+        System.out.println((System.currentTimeMillis() - start) +" ms ");
     }
 }
