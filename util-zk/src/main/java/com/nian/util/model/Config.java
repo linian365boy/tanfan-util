@@ -1,4 +1,4 @@
-package com.nian.util;
+package com.nian.util.model;
 
 import java.io.Serializable;
 
