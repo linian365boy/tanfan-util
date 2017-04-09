@@ -17,7 +17,6 @@ import java.util.List;
 public class ZkSample {
 
     private static class ZkChildListener implements IZkChildListener{
-        @Override
         public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
             System.out.println("childChange parentPath-="+parentPath);
             System.out.println(currentChilds.toString());
@@ -25,29 +24,24 @@ public class ZkSample {
     }
 
     private static class ZkDataListener implements IZkDataListener{
-        @Override
         public void handleDataChange(String s, Object o) throws Exception {
 
         }
 
-        @Override
         public void handleDataDeleted(String s) throws Exception {
 
         }
     }
 
     private static class zk implements IZkStateListener{
-        @Override
         public void handleStateChanged(Watcher.Event.KeeperState keeperState) throws Exception {
 
         }
 
-        @Override
         public void handleNewSession() throws Exception {
 
         }
 
-        @Override
         public void handleSessionEstablishmentError(Throwable throwable) throws Exception {
 
         }
