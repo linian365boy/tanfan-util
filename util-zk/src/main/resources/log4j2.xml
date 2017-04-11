@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--设置log4j2的自身log级别为INFO -->
+<Configuration status="info">
+	<Appenders>
+		<!-- Appenders 控制台日志 -->
+		<Console name="stdout" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+	</Appenders>
+
+	<!-- Application Loggers -->
+	<Loggers>
+		<Root level="INFO">
+			<appender-ref ref="stdout"/>
+        </Root>
+	</Loggers>
+</Configuration>

@@ -20,25 +20,30 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Autowired
     private ConfigDao configDao;
+    @Autowired
     private ZkService zkService;
 
     @Override
     public void saveConfig(Config config) {
         //存入配置中心
-        zkService.save(config);
-        //存入DB
-        configDao.save(config);
-
+        if(zkService.save(config)){
+            //存入DB
+            configDao.save(config);
+        }
     }
 
     @Override
     public void updateConfig(Config config) {
-        configDao.update(config);
+        if(zkService.update(config)){
+            configDao.update(config);
+        }
     }
 
     @Override
     public void deleteConfig(int id) {
-        configDao.delete(id);
+        if(zkService.delete(id)){
+            configDao.delete(id);
+        }
     }
 
     @Override
