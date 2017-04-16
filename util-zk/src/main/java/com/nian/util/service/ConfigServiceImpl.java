@@ -23,7 +23,6 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ZkService zkService;
 
-    @Override
     public void saveConfig(Config config) {
         //存入配置中心
         if(zkService.save(config)){
@@ -32,27 +31,23 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    @Override
     public void updateConfig(Config config) {
         if(zkService.update(config)){
             configDao.update(config);
         }
     }
 
-    @Override
     public void deleteConfig(int id) {
         if(zkService.delete(id)){
             configDao.delete(id);
         }
     }
 
-    @Override
     public List<Config> getConfigs() {
-        return configDao.getConfigs();
+        return zkService.getAllConfig();
     }
 
-    @Override
     public Config getById(int id) {
-        return configDao.getById(id);
+        return zkService.getConfig(id);
     }
 }
