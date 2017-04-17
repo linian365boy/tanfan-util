@@ -83,7 +83,8 @@ public class ZkService {
         logger.info("pushConfigToBusiness businessServers|{}", businessServers);
         String[] servers = businessServers.split(",");
         //分发配置到各业务端
-        //TODO
+        //获取所有配置
+        List<Config> configs = this.getAllConfig();
 
     }
 
