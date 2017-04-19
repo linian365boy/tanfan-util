@@ -31,9 +31,10 @@ public class BusinessServer {
      */
     private List<Config> configs;
 
-    public BusinessServer(String serverPath, ZkClient zkClient) {
+    public BusinessServer(String serverPath, ZkClient zkClient, List<Config> configs) {
         this.serverPath = serverPath;
         this.zkClient = zkClient;
+        this.configs = configs;
     }
 
     public void start(){
@@ -63,5 +64,13 @@ public class BusinessServer {
 
     public void setZkClient(ZkClient zkClient) {
         this.zkClient = zkClient;
+    }
+
+    public List<Config> getConfigs() {
+        return configs;
+    }
+
+    public void setConfigs(List<Config> configs) {
+        this.configs = configs;
     }
 }
