@@ -27,10 +27,16 @@ public class ZkService {
     @Autowired
     private ZkClient zkClient;
 
+
     public boolean save(Config config) {
         try{
             String path = zkClient.create(Constants.CONFIG_PATH_PRE+"/"+config.getId(), config, CreateMode.PERSISTENT);
             if(!StringUtils.isEmpty(path)){
+                String refresh = PropertiesUtil.getValue("config.realtime.refresh", "true");
+                if(Boolean.valueOf(refresh)){
+                    //实时更新业务服务器的配置
+                    pushConfigToBusiness();
+                }
                 return true;
             }
             return false;
@@ -78,7 +84,8 @@ public class ZkService {
      */
     public void pushConfigToBusiness(){
         //通知各业务方
-        //获取所有的业务服务器。为了简单方便，把业务服务器配置在配置文件中。实际生产中，按测试、回归、预发布、生产环境区分业务服务器
+        //获取所有的业务服务器。为了简单方便，把业务服务器配置在配置文件中。
+        // 实际生产中，按测试、回归、预发布、生产环境区分业务服务器
         String businessServers = PropertiesUtil.getValue("businessServer");
         logger.info("pushConfigToBusiness businessServers|{}", businessServers);
         String[] servers = businessServers.split(",");

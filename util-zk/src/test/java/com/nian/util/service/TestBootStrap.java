@@ -17,10 +17,11 @@ public class TestBootStrap {
     public static void main(String[] args){
         ZkClient zkClient = new ZkClient("192.168.139.159:2181", 1000);
         for(int i=0;i<5;i++){
-            BusinessServer server = new BusinessServer("/server", zkClient, null);
+            BusinessServer server = new BusinessServer("192.168.1."+(i+1),
+                    "/server", zkClient, null);
             server.setName("servername"+i);
             server.start();
+            logger.info("start success", server);
         }
-
     }
 }
