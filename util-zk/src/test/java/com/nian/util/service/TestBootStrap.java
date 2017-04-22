@@ -1,5 +1,6 @@
 package com.nian.util.service;
 
+import com.nian.util.constant.Constants;
 import com.nian.util.server.BusinessServer;
 import org.I0Itec.zkclient.ZkClient;
 import org.slf4j.Logger;
@@ -18,10 +19,13 @@ public class TestBootStrap {
         ZkClient zkClient = new ZkClient("192.168.139.159:2181", 1000);
         for(int i=0;i<5;i++){
             BusinessServer server = new BusinessServer("192.168.1."+(i+1),
-                    "/server", zkClient, null);
+                    Constants.SERVER_PATH_PRE, zkClient, null, Constants.CONFIG_PATH_PRE);
             server.setName("servername"+i);
             server.start();
             logger.info("start success", server);
         }
+
+
+
     }
 }

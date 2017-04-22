@@ -1,8 +1,10 @@
 package com.nian.util.service;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonSerializer;
 import com.nian.util.constant.Constants;
 import com.nian.util.model.Config;
+import com.nian.util.server.BusinessServer;
 import com.nian.util.util.PropertiesUtil;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.CreateMode;
@@ -68,15 +70,15 @@ public class ZkService {
         return zkClient.readData(Constants.CONFIG_PATH_PRE+"/"+id);
     }
 
-    public List<Config> getAllConfig(){
-        List<Config> configs = Lists.newArrayList();
-        List<String> list = zkClient.getChildren(Constants.CONFIG_PATH_PRE);
-        for (String path : list) {
-            Config config = zkClient.readData("/config/"+path);
-            configs.add(config);
+    public <T> List<T> getDataByParent(String parentPath){
+        List<T> datas = Lists.newArrayList();
+        List<String> pathStrs = zkClient.getChildren(parentPath);
+        for(String path : pathStrs){
+            T t = zkClient.readData(path);
+            datas.add(t);
         }
-        logger.info("getAllConfig|{} return.", configs);
-        return configs;
+        logger.info("getDataByParent|{} return.", datas);
+        return datas;
     }
 
     /**
@@ -91,7 +93,7 @@ public class ZkService {
         String[] servers = businessServers.split(",");
         //分发配置到各业务端
         //获取所有配置
-        List<Config> configs = this.getAllConfig();
+        List<Config> configs = this.getDataByParent(Constants.CONFIG_PATH_PRE);
 
     }
 
