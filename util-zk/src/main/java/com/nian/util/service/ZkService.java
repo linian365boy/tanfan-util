@@ -50,7 +50,11 @@ public class ZkService {
         try {
             zkClient.writeData(Constants.CONFIG_PATH_PRE + "/" + config.getId(), config);
             //通知各业务方
-            //TODO
+            String refresh = PropertiesUtil.getValue("config.realtime.refresh", "true");
+            if(Boolean.valueOf(refresh)){
+                //实时更新业务服务器的配置
+                pushConfigToBusiness();
+            }
             return true;
         }catch (Exception e){
             e.printStackTrace();

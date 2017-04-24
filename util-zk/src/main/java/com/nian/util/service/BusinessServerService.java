@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface BusinessServerService {
     /**
-     * 获取所以的业务服务器
+     * 获取所有的业务服务器
      * @return
      */
     public List<BusinessServer> getServers();
