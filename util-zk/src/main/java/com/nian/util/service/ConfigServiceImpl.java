@@ -3,6 +3,8 @@ package com.nian.util.service;
 import com.nian.util.constant.Constants;
 import com.nian.util.model.Config;
 import com.nian.util.dao.ConfigDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,7 @@ import java.util.List;
 
 @Service
 public class ConfigServiceImpl implements ConfigService {
-
+    private static final Logger logger = LoggerFactory.getLogger(BusinessServerServiceImpl.class);
     @Autowired
     private ConfigDao configDao;
     @Autowired
@@ -42,6 +44,11 @@ public class ConfigServiceImpl implements ConfigService {
         if(zkService.delete(id)){
             configDao.delete(id);
         }
+    }
+
+    public void pushConfigs(){
+        logger.info("updateConfigs not realtime refresh. now update business server's config.");
+        zkService.pushConfigToBusiness();
     }
 
     public List<Config> getConfigs() {

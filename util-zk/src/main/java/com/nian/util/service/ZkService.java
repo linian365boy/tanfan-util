@@ -34,16 +34,12 @@ public class ZkService {
         try{
             String path = zkClient.create(Constants.CONFIG_PATH_PRE+"/"+config.getId(), config, CreateMode.PERSISTENT);
             if(!StringUtils.isEmpty(path)){
-                String refresh = PropertiesUtil.getValue("config.realtime.refresh", "true");
-                if(Boolean.valueOf(refresh)){
-                    //实时更新业务服务器的配置
-                    pushConfigToBusiness();
-                }
+                logger.info("zookeeper create config|{}, path|{} success.", config, path);
                 return true;
             }
             return false;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.info("zookeeper create config path|{} error", Constants.CONFIG_PATH_PRE+"/"+config.getId());
         }
         return false;
     }
@@ -51,12 +47,7 @@ public class ZkService {
     public boolean update(Config config){
         try {
             zkClient.writeData(Constants.CONFIG_PATH_PRE + "/" + config.getId(), config);
-            //通知各业务方
-            String refresh = PropertiesUtil.getValue("config.realtime.refresh", "true");
-            if(Boolean.valueOf(refresh)){
-                //实时更新业务服务器的配置
-                pushConfigToBusiness();
-            }
+            logger.info("zookeeper update config|{}", config);
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -66,7 +57,7 @@ public class ZkService {
 
     public boolean delete(int id){
         //通知各业务方
-        //TODO
+        logger.info("zookeeper delete config|{}", id);
         return zkClient.delete(Constants.CONFIG_PATH_PRE+"/"+id);
     }
 
@@ -91,14 +82,14 @@ public class ZkService {
     public void pushConfigToBusiness(){
         //通知各业务方
         //获取所有的业务服务器。为了简单方便，把业务服务器配置在配置文件中。
-        // 实际生产中，按测试、回归、预发布、生产环境区分业务服务器
-        String businessServers = PropertiesUtil.getValue("businessServer");
+        List<BusinessServer> businessServers = this.getDataByParent(Constants.SERVER_PATH_PRE);
         logger.info("pushConfigToBusiness businessServers|{}", businessServers);
-        String[] servers = businessServers.split(",");
         //分发配置到各业务端
         //获取所有配置
         List<Config> configs = this.getDataByParent(Constants.CONFIG_PATH_PRE);
-
+        for (BusinessServer server : businessServers) {
+            server.setConfigs(configs);
+        }
     }
 
 }

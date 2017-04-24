@@ -9,7 +9,11 @@ import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.zookeeper.CreateMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.beans.Transient;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,7 +23,9 @@ import java.util.List;
  * @date: 2017/4/17 下午9:40
  * @since JDK 1.7
  */
-public class BusinessServer {
+public class BusinessServer implements Serializable {
+    private static final long serialVersionUID = -8643073374822261059L;
+    private static final Logger logger = LoggerFactory.getLogger(BusinessServer.class);
     /**
      * 机器ip
      */
@@ -97,6 +103,7 @@ public class BusinessServer {
     }
 
     public void setConfigs(List<Config> configs) {
+        logger.info("{} update my config|{}", this.getIp()+"_"+this.getName(), configs);
         this.configs = configs;
     }
 

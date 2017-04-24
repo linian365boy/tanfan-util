@@ -1,6 +1,8 @@
 package com.nian.util.listener;
 
 import org.I0Itec.zkclient.IZkDataListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tanfan
@@ -10,11 +12,14 @@ import org.I0Itec.zkclient.IZkDataListener;
  * @since JDK 1.7
  */
 public class ConfigDataListener implements IZkDataListener {
-    public void handleDataChange(String s, Object o) throws Exception {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigDataListener.class);
+
+    public void handleDataChange(String s, Object o) throws Exception {
+        logger.info("handleDataChange s|{}, o|{}", s, o);
     }
 
     public void handleDataDeleted(String s) throws Exception {
-
+        logger.info("handleDataDeleted s|{}", s);
     }
 }

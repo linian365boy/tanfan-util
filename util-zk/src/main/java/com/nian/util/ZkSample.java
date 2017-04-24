@@ -100,7 +100,7 @@ public class ZkSample {
 
 
     public static void main(String[] args){
-        ZkClient client = new ZkClient("192.168.139.159:2181", 1000);
+        ZkClient client = new ZkClient("192.168.128.128:2181", 1000);
         User user = new User();
         user.setId(2);
         user.setName("niange2");

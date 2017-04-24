@@ -1,6 +1,7 @@
 package com.nian.util.service;
 
 import com.nian.util.constant.Constants;
+import com.nian.util.model.Config;
 import com.nian.util.server.BusinessServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class BusinessServerServiceImpl implements BusinessServerService {
 
     public List<BusinessServer> getServers() {
         List<BusinessServer> servers =
-                zkService.<BusinessServer>getDataByParent(Constants.SERVER_PATH_PRE);
+                zkService.getDataByParent(Constants.SERVER_PATH_PRE);
         logger.info("getServers return datas|{}", servers);
         return servers;
     }

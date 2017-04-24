@@ -3,6 +3,7 @@ package com.nian.util.listener;
 import com.google.common.collect.Lists;
 import com.nian.util.model.Config;
 import com.nian.util.server.BusinessServer;
+import com.nian.util.util.PropertiesUtil;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.slf4j.Logger;
@@ -35,6 +36,11 @@ public class ConfigChildrenListener implements IZkChildListener {
             configs.add(config);
         }
         //更新服务器的配置
-        server.setConfigs(configs);
+        logger.info("handleChildChange configs|{}", configs);
+        String refresh = PropertiesUtil.getValue("config.realtime.refresh", "true");
+        //是否需要实时更新配置
+        if(Boolean.valueOf(refresh)){
+            server.setConfigs(configs);
+        }
     }
 }

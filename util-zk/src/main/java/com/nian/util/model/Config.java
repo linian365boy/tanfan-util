@@ -16,8 +16,17 @@ public class Config implements Serializable {
 
     private static final long serialVersionUID = -6750033623826396948L;
     private int id;
+    /**
+     * key
+     */
     private String key;
+    /**
+     * 备注
+     */
     private String comment;
+    /**
+     * value
+     */
     private String value;
 
     public int getId() {
