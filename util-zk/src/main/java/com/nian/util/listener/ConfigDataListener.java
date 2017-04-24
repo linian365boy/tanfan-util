@@ -10,12 +10,10 @@ import org.I0Itec.zkclient.IZkDataListener;
  * @since JDK 1.7
  */
 public class ConfigDataListener implements IZkDataListener {
-    @Override
     public void handleDataChange(String s, Object o) throws Exception {
 
     }
 
-    @Override
     public void handleDataDeleted(String s) throws Exception {
 
     }

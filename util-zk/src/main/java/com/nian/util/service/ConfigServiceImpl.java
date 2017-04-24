@@ -1,5 +1,6 @@
 package com.nian.util.service;
 
+import com.nian.util.constant.Constants;
 import com.nian.util.model.Config;
 import com.nian.util.dao.ConfigDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     public List<Config> getConfigs() {
-        return zkService.getAllConfig();
+        return zkService.getDataByParent(Constants.CONFIG_PATH_PRE);
     }
 
     public Config getById(int id) {

@@ -9,4 +9,5 @@ package com.nian.util.constant;
  */
 public class Constants {
    public static final String CONFIG_PATH_PRE =  "/config";
+   public static final String SERVER_PATH_PRE = "/server";
 }
