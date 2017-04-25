@@ -10,8 +10,59 @@
     <context:component-scan base-package="com.nian.util"/>
 
     <bean class="org.I0Itec.zkclient.ZkClient" id="zkClient">
-        <constructor-arg index="0" type="String" value="192.168.128.128:2181,192.168.128.128:2182,192.168.128.128:2183"/>
-        <constructor-arg index="1" type="int" value="1000"/>
+        <constructor-arg index="0" type="String" value="${zookeeper.servers}"/>
+        <constructor-arg index="1" type="int" value="${zookeeper.connectionTimeout}"/>
+    </bean>
+
+    <bean name="poolConfig" class="redis.clients.jedis.JedisPoolConfig" id="poolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+    </bean>
+
+    <bean name="hostAndPort7000" id="hostAndPort7000" class="redis.clients.jedis.HostAndPort">
+        <constructor-arg value="${redis.host}" index="0"/>
+        <constructor-arg value="${redis.port7000}" index="1"/>
+    </bean>
+
+    <bean name="hostAndPort7001" id="hostAndPort7001" class="redis.clients.jedis.HostAndPort">
+        <constructor-arg value="${redis.host}" index="0"/>
+        <constructor-arg value="${redis.port7001}" index="1"/>
+    </bean>
+
+    <bean name="hostAndPort7002" id="hostAndPort7002" class="redis.clients.jedis.HostAndPort">
+        <constructor-arg value="${redis.host}" index="0"/>
+        <constructor-arg value="${redis.port7002}" index="1"/>
+    </bean>
+
+    <bean name="hostAndPort7003" id="hostAndPort7003" class="redis.clients.jedis.HostAndPort">
+        <constructor-arg value="${redis.host}" index="0"/>
+        <constructor-arg value="${redis.port7003}" index="1"/>
+    </bean>
+
+    <bean name="hostAndPort7004" id="hostAndPort7004" class="redis.clients.jedis.HostAndPort">
+        <constructor-arg value="${redis.host}" index="0"/>
+        <constructor-arg value="${redis.port7004}" index="1"/>
+    </bean>
+
+    <bean name="hostAndPort7005" id="hostAndPort7005" class="redis.clients.jedis.HostAndPort">
+        <constructor-arg value="${redis.host}" index="0"/>
+        <constructor-arg value="${redis.port7005}" index="1"/>
+    </bean>
+
+    <bean name="jedisCluster" class="redis.clients.jedis.JedisCluster" id="jedisCluster">
+        <constructor-arg index="0">
+            <set>
+                <ref bean="hostAndPort7000"/>
+                <ref bean="hostAndPort7001"/>
+                <ref bean="hostAndPort7002"/>
+                <ref bean="hostAndPort7003"/>
+                <ref bean="hostAndPort7004"/>
+                <ref bean="hostAndPort7005"/>
+            </set>
+        </constructor-arg>
+        <constructor-arg index="1" type="int" value="${redis.timeout}"/>
+        <constructor-arg index="2" ref="poolConfig"/>
     </bean>
 
 </beans>

@@ -1,6 +1,6 @@
 package com.nian.util.listener;
 
-import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.nian.util.model.Config;
 import com.nian.util.server.BusinessServer;
 import com.nian.util.util.PropertiesUtil;
@@ -8,7 +8,9 @@ import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,18 +31,21 @@ public class ConfigChildrenListener implements IZkChildListener {
     }
 
     public void handleChildChange(String parentPath, List<String> children) throws Exception {
-        List<Config> configs = Lists.newArrayList();
-        for(String path : children){
-            logger.info("handleChildChange parentPath|{}, path|{}", parentPath, path);
-            Config config  = zkClient.readData(path);
-            configs.add(config);
-        }
         //更新服务器的配置
-        logger.info("handleChildChange configs|{}", configs);
         String refresh = PropertiesUtil.getValue("config.realtime.refresh", "true");
+        logger.info("handleChildChange parentPath | {}, children | {}, refresh | {}", parentPath, children, refresh);
         //是否需要实时更新配置
-        if(Boolean.valueOf(refresh)){
-            server.setConfigs(configs);
+        if (Boolean.valueOf(refresh)) {
+            if(!CollectionUtils.isEmpty(children)) {
+                List<Config> configs = new ArrayList<>(children.size());
+                for (String path : children) {
+                    logger.info("handleChildChange parentPath|{}, path|{}", parentPath, path);
+                    Config config = zkClient.readData(parentPath + "/" + path);
+                    logger.info("handleChildChange read config|{} form zookeeper", config);
+                    configs.add(config);
+                }
+                server.setConfigs(configs);
+            }
         }
     }
 }

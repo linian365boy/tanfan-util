@@ -17,4 +17,29 @@ public interface BusinessServerService {
      * @return
      */
     public List<BusinessServer> getServers();
+
+    /**
+     * 获取所有业务服务器节点相对path
+     * @param parentPath node path
+     * @return
+     */
+    public List<String> getServerNodes(String parentPath);
+
+    /**
+     * 根据name获取业务服务器节点
+     * @param name
+     * @return
+     */
+    BusinessServer getServerByName(String name);
+
+    /**
+     * 启动业务服务器
+     * @param server 业务服务器
+     */
+    public void start(BusinessServer server);
+
+    /**
+     * 推送配置到业务服务器
+     */
+    public void pushConfigs();
 }

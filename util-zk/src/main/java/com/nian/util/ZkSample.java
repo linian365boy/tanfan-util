@@ -88,12 +88,19 @@ public class ZkSample {
 
     public static void testCreateChild(ZkClient client, String path, Object data){
         //true表示节点存在，false表示不存在
+        boolean p = client.exists("/testUserNode");
+        if(!p){
+            client.create("/testUserNode", null, CreateMode.PERSISTENT);
+        }
         boolean e = client.exists(path);
         if(!e) {
-            String nodePath = client.create(path, data, CreateMode.PERSISTENT);
+            String nodePath = client.create(path, data, CreateMode.EPHEMERAL);
             //输出创建节点的路径
             //System.out.println("create path: " + nodePath);
             logger.info("create path :{}", nodePath);
+
+            List<String> childStr = client.getChildren("/testUserNode");
+            logger.info("after create path , now children |{}", childStr);
         }
         client.delete(path);
     }
@@ -110,6 +117,8 @@ public class ZkSample {
         String path = "/testUserNode/test4";
 
         testCreateChild(client, path, user);
+
+        testCreateChild(client, "/testUserNode/test5", null);
 
         //test1(client, path);
     }

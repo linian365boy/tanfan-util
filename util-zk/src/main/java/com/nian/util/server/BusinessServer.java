@@ -1,18 +1,10 @@
 package com.nian.util.server;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.nian.util.listener.ConfigChildrenListener;
 import com.nian.util.model.Config;
-import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.beans.Transient;
 import java.io.Serializable;
 import java.util.List;
 
@@ -39,38 +31,24 @@ public class BusinessServer implements Serializable {
      */
     private String name;
     /**
-     * zkClient
-     */
-    private ZkClient zkClient;
-    /**
      * 服务器的所有的配置
      */
-    private List<Config> configs;
+    private transient List<Config> configs;
     /**
      * 配置节点
      */
     private String configPath;
 
-    public BusinessServer(String ip, String serverPath, ZkClient zkClient,
+    public BusinessServer(String ip, String serverPath,
                           List<Config> configs, String configPath) {
         this.ip = ip;
         this.serverPath = serverPath;
-        this.zkClient = zkClient;
         this.configs = configs;
         this.configPath = configPath;
     }
 
-    public BusinessServer(String ip, String name, String serverPath, ZkClient zkClient,
-                          List<Config> configs, String configPath) {
-        this(ip, serverPath, zkClient, configs, configPath);
+    public BusinessServer(String name){
         this.name = name;
-    }
-
-    public void start(){
-        //创建该服务器的临时节点
-        zkClient.create(serverPath+"/"+this.getName(), new Gson().toJson(configs).getBytes(), CreateMode.EPHEMERAL);
-        //订阅config子节点变化，并更新自己的配置
-        zkClient.subscribeChildChanges(configPath, new ConfigChildrenListener(zkClient, this));
     }
 
     public String getServerPath() {
@@ -87,15 +65,6 @@ public class BusinessServer implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Transient
-    public ZkClient getZkClient() {
-        return zkClient;
-    }
-
-    public void setZkClient(ZkClient zkClient) {
-        this.zkClient = zkClient;
     }
 
     public List<Config> getConfigs() {
@@ -125,6 +94,6 @@ public class BusinessServer implements Serializable {
 
     @Override
     public String toString(){
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE, true);
     }
 }

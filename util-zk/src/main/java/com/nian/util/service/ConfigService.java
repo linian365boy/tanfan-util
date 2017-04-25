@@ -17,5 +17,4 @@ public interface ConfigService {
     public void deleteConfig(int id);
     public List<Config> getConfigs();
     public Config getById(int id);
-    public void pushConfigs();
 }

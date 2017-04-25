@@ -46,11 +46,6 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    public void pushConfigs(){
-        logger.info("updateConfigs not realtime refresh. now update business server's config.");
-        zkService.pushConfigToBusiness();
-    }
-
     public List<Config> getConfigs() {
         return zkService.getDataByParent(Constants.CONFIG_PATH_PRE);
     }

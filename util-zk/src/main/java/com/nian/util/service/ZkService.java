@@ -1,19 +1,21 @@
 package com.nian.util.service;
 
 import com.google.common.collect.Lists;
-import com.google.gson.JsonSerializer;
+import com.google.gson.Gson;
 import com.nian.util.constant.Constants;
+import com.nian.util.listener.ConfigChildrenListener;
 import com.nian.util.model.Config;
 import com.nian.util.server.BusinessServer;
-import com.nian.util.util.PropertiesUtil;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +34,10 @@ public class ZkService {
 
     public boolean save(Config config) {
         try{
+            //判断父节点是否存在
+            if(!zkClient.exists(Constants.CONFIG_PATH_PRE)){
+                zkClient.createPersistent(Constants.CONFIG_PATH_PRE);
+            }
             String path = zkClient.create(Constants.CONFIG_PATH_PRE+"/"+config.getId(), config, CreateMode.PERSISTENT);
             if(!StringUtils.isEmpty(path)){
                 logger.info("zookeeper create config|{}, path|{} success.", config, path);
@@ -39,7 +45,7 @@ public class ZkService {
             }
             return false;
         }catch (Exception e){
-            logger.info("zookeeper create config path|{} error", Constants.CONFIG_PATH_PRE+"/"+config.getId());
+            logger.error("zookeeper create config path|{} error", Constants.CONFIG_PATH_PRE+"/"+config.getId(), e);
         }
         return false;
     }
@@ -50,7 +56,7 @@ public class ZkService {
             logger.info("zookeeper update config|{}", config);
             return true;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("zookeeper update config |{} error", Constants.CONFIG_PATH_PRE+"/"+config.getId(), e);
         }
         return false;
     }
@@ -66,30 +72,44 @@ public class ZkService {
     }
 
     public <T> List<T> getDataByParent(String parentPath){
-        List<T> datas = Lists.newArrayList();
         List<String> pathStrs = zkClient.getChildren(parentPath);
+        List<T> datas = new ArrayList<>(pathStrs.size());
         for(String path : pathStrs){
-            T t = zkClient.readData(path);
+            logger.info("read data from path | {}", parentPath+"/"+path);
+            T t = zkClient.readData(parentPath+"/"+path);
             datas.add(t);
         }
         logger.info("getDataByParent|{} return.", datas);
         return datas;
     }
 
-    /**
-     * 推送配置到远程业务服务器
-     */
-    public void pushConfigToBusiness(){
-        //通知各业务方
-        //获取所有的业务服务器。为了简单方便，把业务服务器配置在配置文件中。
-        List<BusinessServer> businessServers = this.getDataByParent(Constants.SERVER_PATH_PRE);
-        logger.info("pushConfigToBusiness businessServers|{}", businessServers);
-        //分发配置到各业务端
-        //获取所有配置
-        List<Config> configs = this.getDataByParent(Constants.CONFIG_PATH_PRE);
-        for (BusinessServer server : businessServers) {
-            server.setConfigs(configs);
-        }
+    public List<String> getNodesByParent(String parentPath) {
+        return zkClient.getChildren(parentPath);
     }
 
+    public boolean exists(String path) {
+        return zkClient.exists(path);
+    }
+
+
+    public void createPersistent(String path) {
+        zkClient.createPersistent(path);
+    }
+
+
+    public String createEphemeral(String path, byte[] bytes) {
+        return zkClient.create(path, bytes, CreateMode.EPHEMERAL);
+    }
+
+    public Config readData(String path) {
+        return zkClient.readData(path);
+    }
+
+    public void subscribeConfigChildChanges(BusinessServer server) {
+        zkClient.subscribeChildChanges(server.getConfigPath(), new ConfigChildrenListener(zkClient, server));
+    }
+
+    public void updateData(String path, byte[] bytes) {
+        zkClient.writeData(path, bytes);
+    }
 }

@@ -29,6 +29,10 @@ public class Config implements Serializable {
      */
     private String value;
 
+    public Config(int id){
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }
