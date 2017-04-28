@@ -78,6 +78,7 @@ public class TestBootStrap {
 
     @Test
     public void testUpdateConfig(){
+        testSaveConfig();
         int configId = 1;
         Config config = configService.getById(configId);
         assertNotNull(config);
@@ -92,6 +93,7 @@ public class TestBootStrap {
 
     @Test
     public void testDeleteConfig(){
+        testSaveConfig();
         int configId = 2;
         configService.deleteConfig(configId);
         boolean flag = zkClient.exists(Constants.CONFIG_PATH_PRE+"/"+configId);
