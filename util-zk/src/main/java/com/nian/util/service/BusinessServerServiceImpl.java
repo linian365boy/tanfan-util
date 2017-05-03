@@ -78,7 +78,7 @@ public class BusinessServerServiceImpl implements BusinessServerService {
         //获取所有配置
         List<Config> configs = zkService.getDataByParent(Constants.CONFIG_PATH_PRE);
         for (BusinessServer server : businessServers) {
-            server.setConfigs(configs);
+            server.updateConfig(configs);
             //修改zookeeper节点server保存的config数据
             zkService.updateData(server.getServerPath()+"/"+server.getName(),
                     new Gson().toJson(server.getConfigs()).getBytes());

@@ -4,12 +4,17 @@ import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.serialize.SerializableSerializer;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,7 +26,11 @@ public class ZkSample {
 
     private static class ZkChildListener implements IZkChildListener{
         public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
-            logger.info("childChange parentPath|{}, currentChilds|{}",parentPath, currentChilds.toString());
+            if(!CollectionUtils.isEmpty(currentChilds)) {
+                logger.info("childChange parentPath|{}, currentChilds|{}", parentPath, currentChilds.toString());
+            }else{
+                logger.info("childChange parentPath|{}, no currentChilds.", parentPath, currentChilds);
+            }
         }
     }
 
@@ -31,7 +40,7 @@ public class ZkSample {
         }
 
         public void handleDataDeleted(String s) throws Exception {
-            logger.info("ZkDataListener handleDataDeleted|s value = {}, o = {}",s);
+            logger.info("ZkDataListener handleDataDeleted|s value = {}",s);
         }
     }
 
@@ -107,19 +116,32 @@ public class ZkSample {
 
 
     public static void main(String[] args){
-        ZkClient client = new ZkClient("192.168.128.128:2181", 1000);
+        ZkClient client = new ZkClient("192.168.128.128:2181",1000, 1000, new SerializableSerializer());
         User user = new User();
         user.setId(2);
         user.setName("niange2");
         //子节点变化
         client.subscribeChildChanges("/testUserNode", new ZkChildListener());
         client.subscribeDataChanges("/testUserNode", new ZkDataListener());
+        client.subscribeStateChanges(new ZkStateListener());
         String path = "/testUserNode/test4";
-
-        testCreateChild(client, path, user);
-
-        testCreateChild(client, "/testUserNode/test5", null);
-
-        //test1(client, path);
+        boolean flag = client.exists("/testUserNode");
+        logger.info("0 zk path|/testUserNode is exist | {}" , flag);
+        if(!flag) {
+            client.createEphemeral("/testUserNode", user);
+        }
+        flag = client.exists("/testUserNode");
+        logger.info("1 zk path|/testUserNode is exist | {}" , flag);
+        user.setName("niange6");
+        client.writeData("/testUserNode", user);
+        flag = client.exists("/testUserNode");
+        logger.info("2 zk path|/testUserNode is exist | {}" , flag);
+        //
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            logger.error("System.in.read error.", e);
+        }
+        client.unsubscribeAll();
     }
 }

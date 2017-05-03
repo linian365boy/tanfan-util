@@ -96,4 +96,12 @@ public class BusinessServer implements Serializable {
     public String toString(){
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE, true);
     }
+
+    public void updateConfig(List<Config> configs) {
+        //更新业务服务器的配置
+        this.setConfigs(configs);
+        //远程更新配置
+        String ip = this.getIp();
+
+    }
 }
